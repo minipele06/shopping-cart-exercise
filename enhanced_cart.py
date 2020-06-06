@@ -3,8 +3,9 @@ import datetime
 
 import os
 
-today = datetime.datetime.now()
-today = today.strftime("%Y-%m-%d %I:%M %p")
+time = datetime.datetime.now()
+now = time.strftime("%Y-%m-%d-%I-%M-%S-%f")
+today = time.strftime("%Y-%m-%d %I:%M %p")
 # time = datetime.strptime("6:56", "%H:%M")
 # time = datetime.strftime("%I:%M" %p)
 
@@ -82,14 +83,39 @@ print("---------------------------------")
 
 # file_name = "my_message.txt"
 
-file_name = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "receipts", "my_message.txt")
+file_name = os.path.join(os.path.dirname(os.path.dirname(__file__)), "receipts", f"{now}.txt")
 
 
 with open(file_name, "w") as file: # "w" means "open the file for writing"
-    file.write("Hello World")
+    file.write("---------------------------------")
     file.write("\n")
+    file.write("Best Foods Grocery")
     file.write("\n")
-    file.write("...")
+    file.write("WWW.BEST-FOODS-GROCERY.COM")
     file.write("\n")
+    file.write("---------------------------------")
     file.write("\n")
-    file.write("Hello Again")
+    file.write(f"CHECKOUT AT: {today}")
+    file.write("\n")
+    file.write("---------------------------------")
+    file.write("\n")
+    file.write("SELECTED PRODUCTS:")
+    file.write("\n")
+    for i in shopping_list:
+        for x in products:
+            if x["id"] == i:
+                file.write(f"... {x['name']} ({to_usd(x['price'])})")
+                file.write("\n")
+    file.write("---------------------------------")
+    file.write("\n")
+    file.write(f"SUBTOTAL: {to_usd(subtotal)}")
+    file.write("\n")
+    file.write(f"TAX: {tax}")
+    file.write("\n")
+    file.write(f"TOTAL: {total}")
+    file.write("\n")
+    file.write("---------------------------------")
+    file.write("\n")
+    file.write("THANKS, SEE YOU AGAIN!")
+    file.write("\n")
+    file.write("---------------------------------")
