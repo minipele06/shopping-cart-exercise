@@ -2,6 +2,7 @@
 import datetime
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 load_dotenv()
 
@@ -11,28 +12,13 @@ time = datetime.datetime.now()
 now = time.strftime("%Y-%m-%d-%I-%M-%S-%f")
 today = time.strftime("%Y-%m-%d %I:%M %p")
 
-products = [
-    {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
-    {"id":2, "name": "All-Seasons Salt", "department": "pantry", "aisle": "spices seasonings", "price": 4.99},
-    {"id":3, "name": "Robust Golden Unsweetened Oolong Tea", "department": "beverages", "aisle": "tea", "price": 2.49},
-    {"id":4, "name": "Smart Ones Classic Favorites Mini Rigatoni With Vodka Cream Sauce", "department": "frozen", "aisle": "frozen meals", "price": 6.99},
-    {"id":5, "name": "Green Chile Anytime Sauce", "department": "pantry", "aisle": "marinades meat preparation", "price": 7.99},
-    {"id":6, "name": "Dry Nose Oil", "department": "personal care", "aisle": "cold flu allergy", "price": 21.99},
-    {"id":7, "name": "Pure Coconut Water With Orange", "department": "beverages", "aisle": "juice nectars", "price": 3.50},
-    {"id":8, "name": "Cut Russet Potatoes Steam N' Mash", "department": "frozen", "aisle": "frozen produce", "price": 4.25},
-    {"id":9, "name": "Light Strawberry Blueberry Yogurt", "department": "dairy eggs", "aisle": "yogurt", "price": 6.50},
-    {"id":10, "name": "Sparkling Orange Juice & Prickly Pear Beverage", "department": "beverages", "aisle": "water seltzer sparkling water", "price": 2.99},
-    {"id":11, "name": "Peach Mango Juice", "department": "beverages", "aisle": "refrigerated", "price": 1.99},
-    {"id":12, "name": "Chocolate Fudge Layer Cake", "department": "frozen", "aisle": "frozen dessert", "price": 18.50},
-    {"id":13, "name": "Saline Nasal Mist", "department": "personal care", "aisle": "cold flu allergy", "price": 16.00},
-    {"id":14, "name": "Fresh Scent Dishwasher Cleaner", "department": "household", "aisle": "dish detergents", "price": 4.99},
-    {"id":15, "name": "Overnight Diapers Size 6", "department": "babies", "aisle": "diapers wipes", "price": 25.50},
-    {"id":16, "name": "Mint Chocolate Flavored Syrup", "department": "snacks", "aisle": "ice cream toppings", "price": 4.50},
-    {"id":17, "name": "Rendered Duck Fat", "department": "meat seafood", "aisle": "poultry counter", "price": 9.99},
-    {"id":18, "name": "Pizza for One Suprema Frozen Pizza", "department": "frozen", "aisle": "frozen pizza", "price": 12.50},
-    {"id":19, "name": "Gluten Free Quinoa Three Cheese & Mushroom Blend", "department": "dry goods pasta", "aisle": "grains rice dried goods", "price": 3.99},
-    {"id":20, "name": "Pomegranate Cranberry & Aloe Vera Enrich Drink", "department": "beverages", "aisle": "juice nectars", "price": 4.25}
-] # based on data from Instacart: https://www.instacart.com/datasets/grocery-shopping-2017
+csv_filepath = os.path.join((os.path.dirname(__file__)), "data", "products.csv")
+
+product = pd.read_csv(csv_filepath)
+
+product_num = len(product) + 1
+
+products = product.to_dict("records")
 
 def to_usd(my_price):
     return f"${my_price:,.2f}" #> $12,000.71
@@ -51,10 +37,16 @@ while True:
     except ValueError:
         print("Invalid Product ID")
     else:
-        if response <= 0 or response >= 21:
+        if response <= 0 or response >= product_num:
             print("Invalid Product ID")
+        elif str([x["per_pound"] for x in products if x["id"] == response]).strip("['").strip("']") == "Y":
+            try:
+                pound = float(input("Please Enter Number of Pounds: "))
+                shopping_list.append({"id":response,"per_pound":pound})
+            except ValueError:
+                print("Invalid Pound Value, Re-Enter Product ID and Try Again")
         else:
-            shopping_list.append(response)
+            shopping_list.append({"id":response,"per_pound":"N"})
 
 print("---------------------------------")
 print("Best Foods Grocery")
@@ -67,9 +59,12 @@ subtotal = 0
 
 for i in shopping_list:
     for x in products:
-        if x["id"] == i:
+        if x["id"] == i["id"] and i["per_pound"] == "N":
             print(f"... {x['name']} ({to_usd(x['price'])})")
             subtotal += float(x["price"])
+        elif x["id"] == i["id"]:
+            print(f"... {x['name']} ({to_usd(float(x['price'])*float(i['per_pound']))})")
+            subtotal += float(x["price"]) * float(i["per_pound"])
 
 print("---------------------------------")
 print(f"SUBTOTAL: {to_usd(subtotal)}")
@@ -82,7 +77,6 @@ print("THANKS, SEE YOU AGAIN SOON!")
 print("---------------------------------")
 
 file_name = os.path.join(os.path.dirname(os.path.dirname(__file__)), "receipts", f"{now}.txt")
-
 
 with open(file_name, "w") as file: # "w" means "open the file for writing"
     file.write("---------------------------------")
@@ -101,8 +95,11 @@ with open(file_name, "w") as file: # "w" means "open the file for writing"
     file.write("\n")
     for i in shopping_list:
         for x in products:
-            if x["id"] == i:
+            if x["id"] == i["id"] and i["per_pound"] == "N":
                 file.write(f"... {x['name']} ({to_usd(x['price'])})")
+                file.write("\n")
+            elif x["id"] == i["id"]:
+                file.write(f"... {x['name']} ({to_usd(float(x['price'])*float(i['per_pound']))})")
                 file.write("\n")
     file.write("---------------------------------")
     file.write("\n")
