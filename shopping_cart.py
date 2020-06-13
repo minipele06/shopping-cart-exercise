@@ -3,8 +3,6 @@ import datetime
 
 today = datetime.datetime.now()
 today = today.strftime("%Y-%m-%d %I:%M %p")
-# time = datetime.strptime("6:56", "%H:%M")
-# time = datetime.strftime("%I:%M" %p)
 
 products = [
     {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
@@ -31,8 +29,6 @@ products = [
 
 def to_usd(my_price):
     return f"${my_price:,.2f}" #> $12,000.71
-
-# TODO: write some Python code here to produce the desired output
 
 shopping_list = []
 

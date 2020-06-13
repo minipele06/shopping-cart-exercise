@@ -1,4 +1,4 @@
-# shopping_cart.py
+# enhanced_cart.py
 import datetime
 from dotenv import load_dotenv
 import os
@@ -35,7 +35,7 @@ products = [
 ] # based on data from Instacart: https://www.instacart.com/datasets/grocery-shopping-2017
 
 def to_usd(my_price):
-    return f"${my_price:,.2f}" #> $12,000.71
+    return f"${my_price:,.2f}"
 
 shopping_list = []
 
@@ -84,7 +84,7 @@ print("---------------------------------")
 file_name = os.path.join(os.path.dirname(os.path.dirname(__file__)), "receipts", f"{now}.txt")
 
 
-with open(file_name, "w") as file: # "w" means "open the file for writing"
+with open(file_name, "w") as file: 
     file.write("---------------------------------")
     file.write("\n")
     file.write("Best Foods Grocery")
