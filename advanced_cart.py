@@ -30,7 +30,7 @@ print("Once completed, enter 'Done' to proceed.")
 while True:
     try:
         response = input("Please Enter Product ID: ")
-        if response == "Done":
+        if response.capitalize() == "Done":
             break
         else:
             response = int(response)
