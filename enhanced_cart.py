@@ -3,11 +3,13 @@ import datetime
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
+sales_tax_rate = float(os.getenv("sales_tax_rate"))
+
 time = datetime.datetime.now()
 now = time.strftime("%Y-%m-%d-%I-%M-%S-%f")
 today = time.strftime("%Y-%m-%d %I:%M %p")
-# time = datetime.strptime("6:56", "%H:%M")
-# time = datetime.strftime("%I:%M" %p)
 
 products = [
     {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
@@ -34,8 +36,6 @@ products = [
 
 def to_usd(my_price):
     return f"${my_price:,.2f}" #> $12,000.71
-
-# TODO: write some Python code here to produce the desired output
 
 shopping_list = []
 
@@ -73,15 +73,13 @@ for i in shopping_list:
 
 print("---------------------------------")
 print(f"SUBTOTAL: {to_usd(subtotal)}")
-tax = to_usd(subtotal * 0.0875)
-total = to_usd(subtotal * 1.0875)
+tax = to_usd(subtotal * sales_tax_rate)
+total = to_usd(subtotal * (1 + sales_tax_rate))
 print(f"TAX: {tax}")
 print(f"TOTAL: {total}")
 print("---------------------------------")
 print("THANKS, SEE YOU AGAIN SOON!")
 print("---------------------------------")
-
-# file_name = "my_message.txt"
 
 file_name = os.path.join(os.path.dirname(os.path.dirname(__file__)), "receipts", f"{now}.txt")
 
