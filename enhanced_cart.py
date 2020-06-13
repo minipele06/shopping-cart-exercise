@@ -1,6 +1,6 @@
 # shopping_cart.py
 import datetime
-
+from dotenv import load_dotenv
 import os
 
 time = datetime.datetime.now()
