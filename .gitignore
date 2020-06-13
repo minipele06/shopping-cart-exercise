@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 #Hide receipts
-.receipts
+receipts/
